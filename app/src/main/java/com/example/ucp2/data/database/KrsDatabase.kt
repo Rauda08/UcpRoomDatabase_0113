@@ -8,5 +8,4 @@ import com.example.ucp2.data.entity.Dosen
 @Database(entities = [Dosen::class], version = 1, exportSchema = false)
 abstract class KrsDatabase : RoomDatabase(){
     abstract fun dosenDao(): DosenDao
-
 }
