@@ -15,18 +15,17 @@ class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah
 
     fun updateState(matkulEvent: MatkulEvent) {
         uiState = uiState.copy(
-            matkulEvent = matkulEvent  // Perbaikan: Tidak perlu tanda kurung
+            matkulEvent = matkulEvent
         )
     }
 
-    // Validasi input form
     private fun validateFields(): Boolean {
         val event = uiState.matkulEvent
         val errorState = FormErrorState(
             kode = if (event.kode.isNotEmpty()) null else "KODE tidak boleh kosong",
             nama = if (event.nama.isNotEmpty()) null else "Nama tidak boleh kosong",
-            sks = if (event.sks > 0) null else "SKS tidak boleh kosong", // Perbaikan: Validasi numerik
-            semester = if (event.semester > 0) null else "Semester tidak boleh kosong", // Perbaikan: Validasi numerik
+            sks = if (event.sks.isNotEmpty())  null else "SKS tidak boleh kosong", // Perbaikan: Validasi numerik
+            semester = if (event.semester.isNotEmpty()) null else "Semester tidak boleh kosong", // Perbaikan: Validasi numerik
             jenis = if (event.jenis.isNotEmpty()) null else "Jenis tidak boleh kosong",
             dosenPengampu = if (event.dosenPengampu.isNotEmpty()) null else "Dosen pengampu tidak boleh kosong"
         )
@@ -34,7 +33,6 @@ class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah
         return errorState.isValid()
     }
 
-    // Menyimpan data ke repository
     fun saveData() {
         val currentEvent = uiState.matkulEvent
         if (validateFields()) {
@@ -59,7 +57,6 @@ class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah
         }
     }
 
-    // Reset pesan snackbar setelah ditampilkan
     fun resetSnackBarMessage() {
         uiState = uiState.copy(
             snackBarMessage = null
@@ -67,19 +64,17 @@ class MataKuliahViewModel(private val repositoryMataKuliah: RepositoryMataKuliah
     }
 }
 
-// State untuk UI
 data class MatkulUIState(
     val matkulEvent: MatkulEvent = MatkulEvent(),
     val isEntryValid: FormErrorState = FormErrorState(),
     val snackBarMessage: String? = null
 )
 
-// State untuk error validasi form
 data class FormErrorState(
     val kode: String? = null,
     val nama: String? = null,
-    val sks: Int? = 0,
-    val semester: Int? = 0,
+    val sks: String? = null,
+    val semester: String? = null,
     val jenis: String? = null,
     val dosenPengampu: String? = null
 ) {
@@ -87,8 +82,6 @@ data class FormErrorState(
         return kode == null && nama == null && sks == null && semester == null && jenis == null && dosenPengampu == null
     }
 }
-
-// Fungsi ekstensi untuk mengonversi MatkulEvent menjadi MataKuliah entity
 fun MatkulEvent.toMatkulEntity(): MataKuliah = MataKuliah(
     kode = kode,
     nama = nama,
@@ -98,12 +91,11 @@ fun MatkulEvent.toMatkulEntity(): MataKuliah = MataKuliah(
     dosenPengampu = dosenPengampu
 )
 
-// Data class untuk event
 data class MatkulEvent(
     val kode: String = "",
     val nama: String = "",
-    val sks: Int = 0,
-    val semester: Int = 0,
+    val sks: String = "",
+    val semester: String = "",
     val jenis: String = "",
     val dosenPengampu: String = ""
 )
