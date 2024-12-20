@@ -3,10 +3,9 @@ package com.example.ucp2.ui.viewmodel.matakuliah
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ucp2.data.entity.Dosen
-import com.example.ucp2.repository.RepositoryDosen
+import com.example.ucp2.data.entity.MataKuliah
 import com.example.ucp2.repository.RepositoryMataKuliah
-import com.example.ucp2.ui.viewmodel.dosen.DosenEvent
+import com.example.ucp2.ui.navigation.DestinasiDetailMatkul
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,13 +14,14 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class DetailMhsViewModel (
+class DetailMataKuliahViewModel (
     savedStateHandle: SavedStateHandle,
     private val repositoryMataKuliah: RepositoryMataKuliah,
 
     ) : ViewModel() {
-    private val kode: String = checkNotNull(savedStateHandle[DestinasiDetail.KODE])
+    private val kode: String = checkNotNull(savedStateHandle[DestinasiDetailMatkul.KODE])
 
     val detailUiState: StateFlow<DetailUiState> = repositoryMataKuliah.getMataKuliah(kode)
         .filterNotNull()
@@ -51,24 +51,35 @@ class DetailMhsViewModel (
                 isLoading = true,
             ),
         )
+    fun deleteMataKuliah() {
+        detailUiState.value.detailUiEvent.toMatkulEntity().let {
+            viewModelScope.launch {
+                repositoryMataKuliah.deleteMataKuliah(it)
+            }
+        }
+    }
+}
 
 data class DetailUiState(
-    val detailUiEvent: MataKuliahEvent = DosenEvent (),
+    val detailUiEvent: MatkulEvent = MatkulEvent (),
     val isLoading: Boolean = false,
     val isError: Boolean = false,
     val errorMessage: String = ""
 ) {
     val isUiEventEmpty: Boolean
-        get() = detailUiEvent == DosenEvent()
+        get() = detailUiEvent == MatkulEvent()
 
     val isUiEventNotEmpty: Boolean
-        get() = detailUiEvent != DosenEvent ()
+        get() = detailUiEvent != MatkulEvent ()
 }
 
-fun Dosen.toDetailUiEvent () : DosenEvent {
-    return DosenEvent(
-        nidn = nidn,
+fun MataKuliah.toDetailUiEvent () : MatkulEvent {
+    return MatkulEvent(
+        kode = kode,
         nama = nama,
-        jenisKelamin = jenisKelamin
+        sks = sks,
+        semester = semester,
+        jenis = jenis,
+        dosenPengampu = dosenPengampu
     )
 }
