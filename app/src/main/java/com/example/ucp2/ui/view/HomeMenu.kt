@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeMenuViewPreview() {
     HomeMenuView(
-        onDosenClick = { /* TODO: Tambahkan aksi jika diperlukan */ },
-        onMatkulClick = { /* TODO: Tambahkan aksi jika diperlukan */ }
+        onDosenClick = {  },
+        onMatkulClick = {  }
     )
 }
 
@@ -55,7 +55,7 @@ fun HomeMenuView(
                 .fillMaxWidth(0.8f)
         ) {
             Text(
-                text = "Menu Matkul",
+                text = "Menu Mata Kuliah",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

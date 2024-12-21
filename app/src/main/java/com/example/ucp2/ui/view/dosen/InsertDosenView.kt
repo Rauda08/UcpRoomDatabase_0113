@@ -28,63 +28,67 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ucp2.ui.customwidget.TopAppBar
+import com.example.ucp2.ui.navigation.AlamatNavigasiDosen
 import com.example.ucp2.ui.viewmodel.dosen.DosenEvent
 import com.example.ucp2.ui.viewmodel.dosen.DosenUIState
+import com.example.ucp2.ui.viewmodel.dosen.DosenViewModel
 import com.example.ucp2.ui.viewmodel.dosen.FormErrorState
-import com.example.ucp2.ui.viewmodel.dosen.HomeDosenViewModel
+import com.example.ucp2.ui.viewmodel.dosen.PenyediaViewModel
 import kotlinx.coroutines.launch
+
+object DestinasiInsertDosen : AlamatNavigasiDosen{
+    override val route: String = "insert_dosen"
+}
 
 @Composable
 fun InsertDosenView(
-    onBack: () -> Unit,
+    onBack:() -> Unit,
     onNavigate: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeDosenViewModel = viewModel()
-) {
+    viewModel: DosenViewModel = viewModel(factory = PenyediaViewModel.Factory)
+){
     val uiState=viewModel.uiState //ambil ui state dari viewmodel
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarHostState = remember { SnackbarHostState() } //snackbar state
     val coroutineScope = rememberCoroutineScope()
 
-    // Observasi perubahan snackbarmessage
     LaunchedEffect(uiState.snackBarMessage) {
         uiState.snackBarMessage?.let { message ->
             coroutineScope.launch {
-                snackbarHostState.showSnackbar(message) // tampilkan snackbar
-                viewModel.resetSnackBarMessage() //reset pesan snackbar
+                snackbarHostState.showSnackbar(message) //tampilansnackbar
+                viewModel.resetSnackBarMessage()
             }
         }
     }
 
-    Scaffold(
+    Scaffold (
         modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-        ) {
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
+    ){ padding ->
+        Column (
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
+        ){
             TopAppBar(
                 onBack = onBack,
                 showBackButton = true,
                 judul = "Tambah Dosen",
                 modifier = Modifier
+
             )
-            // Body form
+            //isi body
             InsertBodyDosen(
                 uiState = uiState,
                 onValueChange = { updateEvent ->
-                    viewModel.updateState(updateEvent) // Update state di ViewModel
+                    viewModel.updateState(updateEvent) //update state di viewmodel
                 },
                 onClick = {
-                    viewModel.saveData() // Simpan data
-                    onNavigate() // Navigasi setelah simpan
+                    viewModel.saveData() //simpan data
+                    onNavigate()
                 }
             )
         }
     }
 }
+
 
 @Composable
 fun InsertBodyDosen(

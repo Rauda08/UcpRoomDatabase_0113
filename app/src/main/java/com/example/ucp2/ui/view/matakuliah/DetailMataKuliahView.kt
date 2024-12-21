@@ -29,15 +29,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ucp2.data.entity.MataKuliah
 import com.example.ucp2.ui.customwidget.TopAppBar
-import com.example.ucp2.ui.viewmodel.dosen.PenyediaViewModel
 import com.example.ucp2.ui.viewmodel.matakuliah.DetailMataKuliahViewModel
+import com.example.ucp2.ui.viewmodel.matakuliah.DetailUiState
+import com.example.ucp2.ui.viewmodel.matakuliah.PenyediaViewModel
 import com.example.ucp2.ui.viewmodel.matakuliah.toMatkulEntity
 
+@Preview (showBackground = true)
 @Composable
 fun DetailMataKuliahView (
     modifier: Modifier = Modifier,
@@ -69,7 +72,7 @@ fun DetailMataKuliahView (
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Mahasiswa",
+                    contentDescription = "Edit Mata Kuliah",
                 )
             }
         }
@@ -90,7 +93,7 @@ fun DetailMataKuliahView (
 @Composable
 fun BodyDetailMataKuliah (
     modifier: Modifier = Modifier,
-    detailUiState: DetailMataKuliahViewModel.DetailUiState = DetailUiState(),
+    detailUiState: DetailUiState = DetailUiState(),
     onDeleteClick: () -> Unit = { }
 ) {
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }

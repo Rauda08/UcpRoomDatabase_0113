@@ -14,8 +14,8 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -58,8 +58,8 @@ fun InsertMataKuliahView(
     modifier: Modifier = Modifier,
     viewModel: MataKuliahViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
-    val uiState=viewModel.uiState
-    val snackbarHostState = remember { SnackbarHostState() }
+    val uiState=viewModel.uiState //ambil ui state dari viewmodel
+    val snackbarHostState = remember { SnackbarHostState() } //snackbar state
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.snackBarMessage) {
@@ -73,7 +73,7 @@ fun InsertMataKuliahView(
 
     Scaffold (
         modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
     ){ padding ->
         Column (
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
@@ -81,11 +81,11 @@ fun InsertMataKuliahView(
             TopAppBar(
                 onBack = onBack,
                 showBackButton = true,
-                judul = "Tambah Mata Kuliah",
+                judul = "Tambah MataKuliah",
                 modifier = Modifier
 
             )
-
+            //isi body
             InsertBodyMataKuliah (
                 uiState = uiState,
                 onValueChange = { updateEvent ->
@@ -99,19 +99,18 @@ fun InsertMataKuliahView(
         }
     }
 }
-
 @Composable
 fun InsertBodyMataKuliah(
     modifier: Modifier = Modifier,
     onValueChange: (MatkulEvent) -> Unit,
     uiState: MatkulUIState,
     onClick: () -> Unit
-) {
+){
     Column (
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ){
         FormMataKuliah(
             matkulEvent = uiState.matkulEvent,
             onValueChange = onValueChange,
@@ -119,7 +118,7 @@ fun InsertBodyMataKuliah(
             modifier = Modifier.fillMaxWidth()
         )
         Button(
-            onClick = onClick,
+            onClick=onClick,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Simpan")
@@ -131,108 +130,120 @@ fun InsertBodyMataKuliah(
 @Composable
 fun FormMataKuliah(
     matkulEvent: MatkulEvent = MatkulEvent(),
-    onValueChange: (MatkulEvent) -> Unit = {},
+    onValueChange : (MatkulEvent) -> Unit = {},
     errorState: FormErrorState = FormErrorState(),
     modifier: Modifier = Modifier,
     DosenViewModel: DosenViewModel = viewModel(factory = PenyediaViewModel.Factory)
-) {
-    // Mengambil data dosen dengan benar
+){
     val DosenUIState by DosenViewModel.dosenUIState.collectAsState()
-    val listDosen = DosenUIState.listDosen.map { it.nama }
-    val jenis = listOf("Wajib", "Tidak Wajib")
-    val semester = listOf("Genap", "Ganjil")
+    val listDosen = DosenUIState.listDosen.map{it.nama}
+    val semester = listOf("Genap","Ganjil")
+    val jenis = listOf("Wajib","Tidak")
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        // Kode Matkul
+    Column (modifier = modifier.fillMaxWidth())
+    {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = matkulEvent.kode,
-            onValueChange = { onValueChange(matkulEvent.copy(kode = it)) },
-            label = { Text("KODE Matkul") },
+            onValueChange = {
+                onValueChange(matkulEvent.copy(kode = it))
+            },
+            label = { Text("KODE") },
             isError = errorState.kode != null,
-            placeholder = { Text("Masukkan Kode Matkul") },
+            placeholder = { Text("Masukan KODE") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        errorState.kode?.let {
-            Text(text = it, color = Color.Red)
-        }
 
-        // Nama Matkul
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = matkulEvent.nama,
-            onValueChange = { onValueChange(matkulEvent.copy(nama = it)) },
-            label = { Text("Nama Matkul") },
+            onValueChange = {
+                onValueChange(matkulEvent.copy(nama = it))
+            },
+            label = { Text("Nama")},
             isError = errorState.nama != null,
-            placeholder = { Text("Masukkan Nama Matkul") }
+            placeholder = { Text("Masukan nama")},
         )
-        errorState.nama?.let {
-            Text(text = it, color = Color.Red)
-        }
+        Text(
+            text = errorState.nama ?: "",
+            color = Color.Red
+        )
 
-        // Jumlah SKS
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = matkulEvent.sks,
-            onValueChange = { onValueChange(matkulEvent.copy(sks = it)) },
-            label = { Text("SKS") },
+            onValueChange = {
+                onValueChange(matkulEvent.copy(sks = it))
+            },
+            label = { Text("SKS")},
             isError = errorState.sks != null,
-            placeholder = { Text("Masukkan Jumlah SKS") }
+            placeholder = { Text("Masukan SKS")},
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-        errorState.sks?.let {
-            Text(text = it, color = Color.Red)
-        }
+        Text(
+            text = errorState.sks ?: "",
+            color = Color.Red
+        )
 
-        // Semester
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Semester")
-        Row(modifier = Modifier.fillMaxWidth()) {
-            semester.forEach { semesterOption ->
-                Row(
+        Row (modifier = Modifier.fillMaxWidth()
+        ){
+            semester.forEach{sem ->
+                Row  (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
-                ) {
+                ){
                     RadioButton(
-                        selected = matkulEvent.semester == semesterOption,
-                        onClick = { onValueChange(matkulEvent.copy(semester = semesterOption)) },
+                        selected = matkulEvent.semester == sem,
+                        onClick = {
+                            onValueChange(matkulEvent.copy(semester = sem))
+                        },
                     )
-                    Text(text = semesterOption)
+                    Text(
+                        text = sem,
+                    )
                 }
             }
         }
 
-        // Jenis
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Jenis")
-        Row(modifier = Modifier.fillMaxWidth()) {
-            jenis.forEach { jenisOption ->
-                Row(
+        Row (modifier = Modifier.fillMaxWidth()
+        ){
+            jenis.forEach{jk ->
+                Row  (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
-                ) {
+                ){
                     RadioButton(
-                        selected = matkulEvent.jenis == jenisOption,
-                        onClick = { onValueChange(matkulEvent.copy(jenis = jenisOption)) },
+                        selected = matkulEvent.jenis == jk,
+                        onClick = {
+                            onValueChange(matkulEvent.copy(jenis = jk))
+                        },
                     )
-                    Text(text = jenisOption)
+                    Text(
+                        text = jk,
+                    )
                 }
             }
         }
 
-        // Dropdown Dosen Pengampu
         DropdownMenuField(
             label = "Nama Dosen Pengampu",
             options = listDosen,
             selectedOption = matkulEvent.dosenPengampu,
-            onOptionSelected = { selectedDosen ->
-                onValueChange(matkulEvent.copy(dosenPengampu = selectedDosen))
+            onOptionSelected = {
+                    selectedDosen -> onValueChange(matkulEvent.copy(dosenPengampu = selectedDosen))
             },
             isError = errorState.dosenPengampu != null,
             errorMessage = errorState.dosenPengampu
         )
+
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuField(
     label: String,
@@ -242,19 +253,19 @@ fun DropdownMenuField(
     isError: Boolean = false,
     errorMessage: String? = null
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var currentSelection by remember { mutableStateOf(selectedOption) }
+    var expanded by remember { mutableStateOf(false) } // Mengatur status drop-down
+    var currentSelection by remember { mutableStateOf(selectedOption) } // Menyimpan pilihan saat ini
 
     Column {
         OutlinedTextField(
             value = currentSelection,
-            onValueChange = {},
+            onValueChange = {}, // Tidak memungkinkan input manual
             readOnly = true,
             label = { Text(label) },
             trailingIcon = {
-                IconButton(onClick = { expanded = !expanded }) {
+                androidx.compose.material3.IconButton(onClick = { expanded = !expanded }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
+                        imageVector = if (expanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowDropDown,
                         contentDescription = "Dropdown Icon"
                     )
                 }
@@ -288,4 +299,3 @@ fun DropdownMenuField(
         }
     }
 }
-
