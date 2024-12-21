@@ -1,5 +1,6 @@
 package com.example.ucp2.ui.view.dosen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -40,6 +42,7 @@ import com.example.ucp2.ui.viewmodel.dosen.HomeDosenViewModel
 import com.example.ucp2.ui.viewmodel.dosen.HomeUiState
 import com.example.ucp2.ui.viewmodel.dosen.PenyediaViewModel
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun HomeDosenView(
@@ -153,7 +156,8 @@ fun ListDosen(
     modifier: Modifier = Modifier,
     onClick: (String) -> Unit = {}
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier
+    ) {
         items(items = listDosen) { dosen ->
             CardDosen(
                 dosen = dosen,
@@ -162,6 +166,7 @@ fun ListDosen(
         }
     }
 }
+
 @Composable
 fun CardDosen(
     dosen: Dosen,
@@ -170,6 +175,9 @@ fun CardDosen(
 ) {
     Card(
         onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) // Warna latar belakang kartu
+        ),
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
