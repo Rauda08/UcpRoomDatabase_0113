@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.ucp2.ui.view.HomeMenuView
 import com.example.ucp2.ui.view.dosen.DetailDosenView
 import com.example.ucp2.ui.view.dosen.HomeDosenView
 import com.example.ucp2.ui.view.dosen.InsertDosenView
@@ -20,15 +21,26 @@ fun PengelolaHalaman(
 ) {
     NavHost(
         navController = navController,
-        startDestination = DestinasiHomeDosen.route
+        startDestination = DestinasiDetailView.route
     ) {
+        composable(
+            route = DestinasiHomeMenu.route
+        ) {
+            HomeMenuView(
+                onDosenClick = { nidn ->
+                    navController.navigate(DestinasiHomeDosen.route)
+                },
+                onMatkulClick = {
+                    navController.navigate(DestinasiHomeMatkul.route)
+                }
+            )
+        }
         composable(
             route = DestinasiHomeDosen.route
         ) {
             HomeDosenView(
                 onDetailClick = { nidn ->
                     navController.navigate("${DestinasiDetailDosen.route}/$nidn")
-                    println("PengelolaHalaman: nidn = $nidn")
                 },
                 onAddDosen = {
                     navController.navigate(DestinasiInsertDosen.route)
@@ -36,21 +48,9 @@ fun PengelolaHalaman(
                 modifier = modifier
             )
         }
-        composable(
-            route = DestinasiInsertDosen.route
-        ) {
-            InsertDosenView(
-                onBack = {
-                    navController.popBackStack()
-                },
-                onNavigate = {
-                    navController.popBackStack()
-                },
-                modifier = modifier
-            )
-        }
 
         composable(
+            route = DestinasiHomeMatkul.route
             DestinasiDetailDosen.routesWithArg,
             arguments = listOf(
                 navArgument(DestinasiDetailDosen.NIDN) {
