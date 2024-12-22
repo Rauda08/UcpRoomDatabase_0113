@@ -53,7 +53,7 @@ tampilan aplikasi
 
 27. halaman utama
     
-    ![Screenshot 2024-12-22 064848](https://github.com/user-attachments/assets/b748545c-0a62-4967-a651-c8c9f80d16ca)
+   ![Screenshot 2024-12-22 073537](https://github.com/user-attachments/assets/e04e3996-208e-4ddb-bc83-c19b4e7fff37)
 
 
 
