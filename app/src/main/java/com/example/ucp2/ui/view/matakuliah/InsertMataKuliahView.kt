@@ -1,5 +1,3 @@
-package com.example.ucp2.ui.view.matakuliah
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -14,6 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ucp2.ui.customwidget.TopAppBar
 import com.example.ucp2.ui.navigation.AlamatNavigasiMatkul
+import com.example.ucp2.ui.theme.PinkBackground
+import com.example.ucp2.ui.theme.PinkOnSurface
+import com.example.ucp2.ui.view.matakuliah.PinkOnPrimary
+import com.example.ucp2.ui.view.matakuliah.PinkPrimary
+import com.example.ucp2.ui.view.matakuliah.PinkSecondary
 import com.example.ucp2.ui.viewmodel.matakuliah.FormErrorState
 import com.example.ucp2.ui.viewmodel.matakuliah.MataKuliahViewModel
 import com.example.ucp2.ui.viewmodel.matakuliah.MatkulEvent
@@ -24,6 +27,7 @@ import kotlinx.coroutines.launch
 object DestinasiInsertMatkul : AlamatNavigasiMatkul {
     override val route: String = "insert_matkul"
 }
+
 @Composable
 fun InsertMataKuliahView(
     onBack: () -> Unit,
@@ -44,30 +48,42 @@ fun InsertMataKuliahView(
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-        ) {
-            TopAppBar(
-                onBack = onBack,
-                showBackButton = true,
-                judul = "Tambah Mata Kuliah",
+    MaterialTheme(
+        colorScheme = lightColorScheme(
+            primary = PinkPrimary,
+            secondary = PinkSecondary,
+            onPrimary = PinkOnPrimary,
+            onSurface = PinkOnSurface,
+            background = PinkBackground,
+            surface = Color.White,
+            onBackground = Color.Black
+        )
+    ) {
+        Scaffold(
+            modifier = modifier,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { padding ->
+            Column(
                 modifier = Modifier
-            )
-            InsertBodyMataKuliah(
-                uiState = uiState,
-                onValueChange = { updateEvent -> viewModel.updateState(updateEvent) },
-                onClick = {
-                    viewModel.saveData()
-                    onNavigate()
-                }
-            )
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp)
+            ) {
+                TopAppBar(
+                    onBack = onBack,
+                    showBackButton = true,
+                    judul = "Tambah Mata Kuliah",
+                    modifier = Modifier
+                )
+                InsertBodyMataKuliah(
+                    uiState = uiState,
+                    onValueChange = { updateEvent -> viewModel.updateState(updateEvent) },
+                    onClick = {
+                        viewModel.saveData()
+                        onNavigate()
+                    }
+                )
+            }
         }
     }
 }
@@ -92,9 +108,12 @@ fun InsertBodyMataKuliah(
         )
         Button(
             onClick = onClick,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PinkPrimary
+            )
         ) {
-            Text("Simpan")
+            Text("Simpan", color = Color.White)
         }
     }
 }

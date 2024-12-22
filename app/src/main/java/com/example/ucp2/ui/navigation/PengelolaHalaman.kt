@@ -1,5 +1,6 @@
 package com.example.ucp2.ui.navigation
 
+import InsertMataKuliahView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -13,10 +14,8 @@ import com.example.ucp2.ui.view.dosen.DestinasiInsertDosen
 import com.example.ucp2.ui.view.dosen.DetailDosenView
 import com.example.ucp2.ui.view.dosen.HomeDosenView
 import com.example.ucp2.ui.view.dosen.InsertDosenView
-import com.example.ucp2.ui.view.matakuliah.DestinasiInsertMatkul
 import com.example.ucp2.ui.view.matakuliah.DetailMataKuliahView
 import com.example.ucp2.ui.view.matakuliah.HomeMataKuliahView
-import com.example.ucp2.ui.view.matakuliah.InsertMataKuliahView
 import com.example.ucp2.ui.view.matakuliah.UpdateMataKuliahView
 
 @Composable
@@ -132,6 +131,7 @@ fun PengelolaHalaman(
 
             kode?.let { kode ->
                 DetailMataKuliahView(
+
                     onBack = {
                         navController.popBackStack()
                     },

@@ -1,5 +1,7 @@
 package com.example.ucp2.ui.view.matakuliah
 
+import InsertBodyMataKuliah
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ucp2.ui.customwidget.TopAppBar
+import com.example.ucp2.ui.theme.PinkBackground
 import com.example.ucp2.ui.viewmodel.matakuliah.PenyediaViewModel
 import com.example.ucp2.ui.viewmodel.matakuliah.UpdateMataKuliahViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,17 +31,14 @@ fun UpdateMataKuliahView(
     onNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UpdateMataKuliahViewModel = viewModel(factory = PenyediaViewModel.Factory)
-
-){
+) {
     val uiState = viewModel.updateUIState
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(uiState.snackBarMessage) {
-        println("LaunchedEffect triggered")
         uiState.snackBarMessage?.let { message ->
-            println("Launching coroutine: $message")
             coroutineScope.launch {
-                println("Launching coroutine for snackbar")
                 snackbarHostState.showSnackbar(
                     message = message,
                     duration = SnackbarDuration.Long
@@ -47,8 +47,9 @@ fun UpdateMataKuliahView(
             }
         }
     }
-    Scaffold (
-        modifier=modifier,
+
+    Scaffold(
+        modifier = modifier,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -58,13 +59,14 @@ fun UpdateMataKuliahView(
                 modifier = modifier
             )
         }
-    ){ padding ->
-        Column (
-            modifier= Modifier
+    ) { padding ->
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp)
-        ){
+                .background(PinkBackground)
+        ) {
             InsertBodyMataKuliah(
                 uiState = uiState,
                 onValueChange = { updateEvent ->
@@ -72,10 +74,10 @@ fun UpdateMataKuliahView(
                 },
                 onClick = {
                     coroutineScope.launch {
-                        if (viewModel.validateFields()){
+                        if (viewModel.validateFields()) {
                             viewModel.updateData()
                             delay(500)
-                            withContext(Dispatchers.Main){
+                            withContext(Dispatchers.Main) {
                                 onNavigate()
                             }
                         }

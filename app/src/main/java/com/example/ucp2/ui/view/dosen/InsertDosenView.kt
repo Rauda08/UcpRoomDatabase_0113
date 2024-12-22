@@ -1,21 +1,13 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ucp2.ui.view.dosen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -23,12 +15,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ucp2.ui.customwidget.TopAppBar
-import com.example.ucp2.ui.navigation.AlamatNavigasiDosen
+import com.example.ucp2.ui.theme.PinkLight
+import com.example.ucp2.ui.theme.PinkMedium
 import com.example.ucp2.ui.viewmodel.dosen.DosenEvent
 import com.example.ucp2.ui.viewmodel.dosen.DosenUIState
 import com.example.ucp2.ui.viewmodel.dosen.DosenViewModel
@@ -36,59 +31,76 @@ import com.example.ucp2.ui.viewmodel.dosen.FormErrorState
 import com.example.ucp2.ui.viewmodel.dosen.PenyediaViewModel
 import kotlinx.coroutines.launch
 
-object DestinasiInsertDosen : AlamatNavigasiDosen{
-    override val route: String = "insert_dosen"
+object DestinasiInsertDosen {
+    const val route: String = "insert_dosen"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsertDosenView(
-    onBack:() -> Unit,
+    onBack: () -> Unit,
     onNavigate: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DosenViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
-    val uiState=viewModel.uiState //ambil ui state dari viewmodel
-    val snackbarHostState = remember { SnackbarHostState() } //snackbar state
+) {
+    val uiState = viewModel.uiState
+    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.snackBarMessage) {
         uiState.snackBarMessage?.let { message ->
             coroutineScope.launch {
-                snackbarHostState.showSnackbar(message) //tampilansnackbar
+                snackbarHostState.showSnackbar(message)
                 viewModel.resetSnackBarMessage()
             }
         }
     }
 
-    Scaffold (
+    Scaffold(
         modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
-    ){ padding ->
-        Column (
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
-        ){
-            TopAppBar(
-                onBack = onBack,
-                showBackButton = true,
-                judul = "Tambah Dosen",
-                modifier = Modifier
-
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Tambah Dosen",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Kembali",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = PinkMedium
+                )
             )
-            //isi body
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             InsertBodyDosen(
                 uiState = uiState,
-                onValueChange = { updateEvent ->
-                    viewModel.updateState(updateEvent) //update state di viewmodel
-                },
+                onValueChange = { updateEvent -> viewModel.updateState(updateEvent) },
                 onClick = {
-                    viewModel.saveData() //simpan data
+                    viewModel.saveData()
                     onNavigate()
                 }
             )
         }
     }
 }
-
 
 @Composable
 fun InsertBodyDosen(
@@ -97,31 +109,51 @@ fun InsertBodyDosen(
     uiState: DosenUIState,
     onClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = PinkLight) // Light pink background
     ) {
-        FormDosen(
-            dosenEvent = uiState.dosenEvent,
-            onValueChange = onValueChange,
-            errorState = uiState.isEntryValid,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = onClick,
-            modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Simpan")
+            Text(
+                text = "Formulir Dosen",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 16.dp),
+                textAlign = TextAlign.Center,
+                color = PinkMedium // Pink color for the title
+            )
+
+            FormDosen(
+                dosenEvent = uiState.dosenEvent,
+                onValueChange = onValueChange,
+                errorState = uiState.isEntryValid,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = PinkMedium)
+            ) {
+                Text(text = "Simpan", color = Color.White)
+            }
         }
     }
 }
-@Preview(showBackground = true)
+
 @Composable
 fun FormDosen(
-    dosenEvent: DosenEvent = DosenEvent(),
-    onValueChange: (DosenEvent) -> Unit = {},
-    errorState: FormErrorState = FormErrorState(),
+    dosenEvent: DosenEvent,
+    onValueChange: (DosenEvent) -> Unit,
+    errorState: FormErrorState,
     modifier: Modifier = Modifier
 ) {
     val jenisKelamin = listOf("Laki-laki", "Perempuan")
@@ -130,36 +162,36 @@ fun FormDosen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = dosenEvent.nama,
-            onValueChange = {
-                onValueChange(dosenEvent.copy(nama = it))
-            },
+            onValueChange = { onValueChange(dosenEvent.copy(nama = it)) },
             label = { Text("Nama") },
             isError = errorState.nama != null,
             placeholder = { Text("Masukkan nama") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = PinkMedium) // Pink border
         )
-        Text(
-            text = errorState.nama ?: "",
-            color = Color.Red
-        )
+        if (errorState.nama != null) {
+            Text(text = errorState.nama ?: "", color = Color.Red, fontSize = 12.sp)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = dosenEvent.nidn,
-            onValueChange = {
-                onValueChange(dosenEvent.copy(nidn = it))
-            },
+            onValueChange = { onValueChange(dosenEvent.copy(nidn = it)) },
             label = { Text("NIDN") },
             isError = errorState.nidn != null,
             placeholder = { Text("Masukkan NIDN") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = PinkMedium) // Pink border
         )
+        if (errorState.nidn != null) {
+            Text(text = errorState.nidn ?: "", color = Color.Red, fontSize = 12.sp)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Jenis Kelamin")
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Text(text = "Jenis Kelamin", fontWeight = FontWeight.Bold, color = PinkMedium) // Pink color for text
+        Row(modifier = Modifier.fillMaxWidth()) {
             jenisKelamin.forEach { jk ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -167,16 +199,21 @@ fun FormDosen(
                 ) {
                     RadioButton(
                         selected = dosenEvent.jenisKelamin == jk,
-                        onClick = {
-                            onValueChange(dosenEvent.copy(jenisKelamin = jk))
-                        },
+                        onClick = { onValueChange(dosenEvent.copy(jenisKelamin = jk)) },
+                        colors = RadioButtonDefaults.colors(selectedColor = PinkMedium)
                     )
-                    Text(
-                        text = jk,
-                    )
+                    Text(text = jk, color = PinkMedium) // Pink color for the radio button label
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewInsertDosenView() {
+    MaterialTheme {
+        InsertDosenView(onBack = {}, onNavigate = {})
     }
 }
 
