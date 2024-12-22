@@ -1,3 +1,4 @@
+link video : https://drive.google.com/drive/folders/1HpxEIluhKqR9MNcnqnMBckhCP3__VGKe?usp=drive_link
 tampilan aplikasi
 1. Halaman Utama
    
